@@ -2,7 +2,7 @@ import { createAdminToken, createUserToken } from "../utils/generateToken.js";
 import { uploadImages } from "../utils/uploadImages.js";
 import { sendEmail } from "../utils/sendEmail.js";
 import { Admin } from "../models/adminModel.js";
-import { User } from "../models/UserModel.js";
+import { User } from "../models/userModel.js";
 import { sendOTP } from "../utils/sendPhoneOTP.js";
 import bcrypt from "bcryptjs";
 
