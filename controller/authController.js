@@ -254,6 +254,7 @@ export async function registerUser(req, res) {
     const { phonenumber } = req.body;
     if (!phonenumber) {
       return res.status(400).json({
+        status: 200,
         message: "please provide phonenumber",
       });
     }
@@ -273,7 +274,7 @@ export async function registerUser(req, res) {
 
       return res
         .status(200)
-        .json({ message: "Please verify your number with OTP" });
+        .json({ status: 200, message: "Please verify your number with OTP" });
     }
 
     const user = new User({
@@ -291,11 +292,13 @@ export async function registerUser(req, res) {
     return res.json({
       success: true,
       user,
+      status: 200,
       message: "Please verify your number with the OTP.",
     });
   } catch (error) {
     return res.json({
       success: false,
+      status: 200,
       message: "Registration failed",
       error: error.message,
     });
@@ -305,11 +308,16 @@ export async function registerUser(req, res) {
 export const resendPhoneOtp = async (req, res) => {
   const { phonenumber } = req.body;
   if (!phonenumber)
-    return res.status(400).json({ message: "Phone number is required" });
+    return res
+      .status(400)
+      .json({ status: 400, message: "Phone number is required" });
 
   try {
     const user = await User.findOne({ phonenumber });
-    if (!user) return res.status(404).json({ message: "User not registered" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: 404, message: "User not registered" });
 
     const otp = generateOtp();
     const otpExpiry = new Date(Date.now() + 5 * 60 * 1000); // 5 minutes from now
@@ -323,11 +331,18 @@ export const resendPhoneOtp = async (req, res) => {
 
     console.log(`OTP resent to ${phonenumber}: ${otp}`);
 
-    res.json({ success: true, message: "OTP resent successfully" });
+    res.json({
+      success: true,
+      status: 200,
+      message: "OTP resent successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error resending OTP", error });
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Error resending OTP",
+      error,
+    });
   }
 };
 export const verifyLoginPhoneOtp = async (req, res) => {
@@ -335,7 +350,7 @@ export const verifyLoginPhoneOtp = async (req, res) => {
   if (!phonenumber || !otp)
     return res
       .status(400)
-      .json({ message: "Phonenumber and OTP are required" });
+      .json({ status: 400, message: "Phonenumber and OTP are required" });
 
   try {
     const user = await User.findOne({ phonenumber });
@@ -343,11 +358,13 @@ export const verifyLoginPhoneOtp = async (req, res) => {
     if (!user.optVerified) {
       return res.status(400).json({
         success: false,
+        status: 400,
         message: "please complete your registeration first",
       });
     }
     if (!user.password) {
       return res.status(400).json({
+        status: 400,
         success: false,
         message: "please complete your pin registeration first",
       });
@@ -357,9 +374,11 @@ export const verifyLoginPhoneOtp = async (req, res) => {
       Number(user.otp) !== Number(otp) ||
       user.otpExpiry < Date.now()
     ) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired OTP" });
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: "Invalid or expired OTP",
+      });
     }
 
     user.otp = null; // Clear OTP after successful verification
@@ -374,11 +393,18 @@ export const verifyLoginPhoneOtp = async (req, res) => {
       .cookie("accessToken", token, {
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       })
-      .json({ success: true, message: "OTP verified successfully" });
+      .json({
+        success: true,
+        status: 200,
+        message: "OTP verified successfully",
+      });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error verifying OTP", error });
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Error verifying OTP",
+      error,
+    });
   }
 };
 
@@ -387,7 +413,7 @@ export const verifyRegisterationPhoneOtp = async (req, res) => {
   if (!phonenumber || !otp)
     return res
       .status(400)
-      .json({ message: "Phonenumber and OTP are required" });
+      .json({ status: 400, message: "Phonenumber and OTP are required" });
 
   try {
     const user = await User.findOne({ phonenumber });
@@ -397,9 +423,11 @@ export const verifyRegisterationPhoneOtp = async (req, res) => {
       Number(user.otp) !== Number(otp) ||
       user.otpExpiry < Date.now()
     ) {
-      return res
-        .status(400)
-        .json({ success: false, message: "Invalid or expired OTP" });
+      return res.status(400).json({
+        status: 400,
+        success: false,
+        message: "Invalid or expired OTP",
+      });
     }
 
     user.otp = null; // Clear OTP after successful verification
@@ -408,21 +436,32 @@ export const verifyRegisterationPhoneOtp = async (req, res) => {
     user.isRegistered = true;
     await user.save();
 
-    res.json({ success: true, message: "OTP verified successfully" });
+    res.json({
+      success: true,
+      status: 200,
+      message: "OTP verified successfully",
+    });
   } catch (error) {
-    res
-      .status(500)
-      .json({ success: false, message: "Error verifying OTP", error });
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Error verifying OTP",
+      error,
+    });
   }
 };
 
 export const setPassword = async (req, res) => {
   const { phonenumber, password, confirmPassword } = req.body;
   if (!phonenumber || !password || !confirmPassword) {
-    return res.status(400).json({ message: "All fields are required" });
+    return res
+      .status(400)
+      .json({ status: 400, message: "All fields are required" });
   }
   if (password !== confirmPassword) {
-    return res.status(400).json({ message: "Passwords do not match" });
+    return res
+      .status(400)
+      .json({ status: 400, message: "Passwords do not match" });
   }
 
   try {
@@ -430,14 +469,16 @@ export const setPassword = async (req, res) => {
     if (!user)
       return res
         .status(404)
-        .json({ success: false, message: "User not found" });
+        .json({ status: 404, success: false, message: "User not found" });
     if (!user.optVerified)
       return res.status(404).json({
         success: false,
+        status: 400,
         message: "number not verified, Please complete your registeration",
       });
     if (user.password)
       return res.status(401).json({
+        status: 401,
         success: false,
         message: "pincode already set please forget picode",
       });
@@ -453,9 +494,14 @@ export const setPassword = async (req, res) => {
       .cookie("accessToken", token, {
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       })
-      .json({ success: true, message: "Password set successfully" });
+      .json({
+        success: true,
+        status: 200,
+        message: "Password set successfully",
+      });
   } catch (error) {
     res.status(500).json({
+      status: 500,
       success: false,
       message: "Error setting password",
       error: error.message,
@@ -471,12 +517,17 @@ export async function userPhoneLogout(req, res) {
         secure: true, // Use `secure: true` if you're using HTTPS
         sameSite: "strict", // Add SameSite policy for security
       })
-      .json({ success: true, message: "User logged out successfully" });
+      .json({
+        success: true,
+        status: 200,
+        message: "User logged out successfully",
+      });
   } catch (error) {
     return res.status(500).json({
       success: false,
       message: "Logout failed",
       error: error.message,
+      status: 500,
     });
   }
 }
