@@ -446,12 +446,24 @@ export const verifyRegisterationPhoneOtp = async (req, res) => {
     user.optVerified = true;
     user.isRegistered = true;
     await user.save();
-
-    res.json({
-      success: true,
-      status: 200,
-      message: "OTP verified successfully",
+    const token = await createUserToken({
+      id: user._id,
+      phonenumber: user.phonenumber,
     });
+    res
+      .cookie("accessToken", token, {
+        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+      })
+      .json({
+        user: {
+          phonenumber,
+          token,
+          userId: user._id,
+        },
+        success: true,
+        status: 200,
+        message: "OTP verified successfully",
+      });
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -497,19 +509,12 @@ export const setPassword = async (req, res) => {
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
     await user.save();
-    const token = await createUserToken({
-      id: user._id,
-      phonenumber: user.phonenumber,
+
+    return res.json({
+      success: true,
+      status: 200,
+      message: "Password set successfully",
     });
-    return res
-      .cookie("accessToken", token, {
-        expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
-      })
-      .json({
-        success: true,
-        status: 200,
-        message: "Password set successfully",
-      });
   } catch (error) {
     res.status(500).json({
       status: 500,
