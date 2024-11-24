@@ -224,7 +224,10 @@ export async function sendLoginPhoneOTP(req, res) {
     const otpExpiry = new Date(Date.now() + 30 * 1000); // 5 minutes from now
 
     let user = await User.findOne({ phonenumber });
-    if (!user) return res.status(404).json({ message: "User not registered" });
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: 200, message: "User not registered" });
     if (!user.isRegistered)
       return res
         .status(401)
@@ -237,12 +240,14 @@ export async function sendLoginPhoneOTP(req, res) {
     const smsResponse = await sendOTP(phonenumber, otp);
     res.json({
       success: true,
+      status: 200,
       message: "we have sent login otp to your number",
     });
     console.log("SMS sent successfully:", smsResponse);
   } catch (error) {
     console.log(error.message);
     return res.json({
+      status: 400,
       success: false,
       message: "Login failed",
       error: error.message,
@@ -259,9 +264,10 @@ export async function registerUser(req, res) {
       });
     }
     const isUserExist = await User.findOne({ phonenumber });
+
     const otp = generateOtp();
     const otpExpiry = new Date(Date.now() + 30 * 1000); // OTP valid for 30 sec
-    if (isUserExist) {
+    if (isUserExist && !user.isRegistered) {
       await User.findOneAndUpdate(
         { phonenumber },
         {
@@ -394,6 +400,11 @@ export const verifyLoginPhoneOtp = async (req, res) => {
         expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
       })
       .json({
+        user: {
+          token,
+          userId: user._id,
+          phonenumber,
+        },
         success: true,
         status: 200,
         message: "OTP verified successfully",
