@@ -489,7 +489,7 @@ export const verifyLoginPhoneOtp = async (req, res) => {
 
     user.otp = null; // Clear OTP after successful verification
     user.otpExpiry = null;
-
+    user.isRegistered = true;
     await user.save();
     const token = await createUserToken({
       id: user._id,
@@ -603,7 +603,7 @@ export const setPassword = async (req, res) => {
       return res.status(401).json({
         status: 401,
         success: false,
-        message: "pincode already set please forget picode",
+        message: "pincode already set please forget pincode",
       });
 
     const hashedPassword = await bcrypt.hash(password, 10);

@@ -4,6 +4,7 @@ import {
   deleteUser,
   getAllUser,
   adminDetails,
+  getApps,
 } from "../controller/adminController.js";
 import { isAuthenticatedAdmin } from "../middlewares/isAuthenticatedAdmin.js";
 import {
@@ -15,6 +16,7 @@ import {
 } from "../controller/authController.js";
 const adminRouter = express.Router();
 adminRouter.post("/", registerAdmin);
+adminRouter.post("/apps", getApps);
 adminRouter.post("/verify", verifyAdminOtp);
 adminRouter.post("/login", adminLogin);
 adminRouter.post("/login/verify", verifyAdminLoginOtp);
