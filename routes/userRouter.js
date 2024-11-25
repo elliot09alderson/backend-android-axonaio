@@ -20,7 +20,7 @@ export const userRouter = express.Router();
 userRouter.post("/logout", userPhoneLogout);
 userRouter.post("/login/send-otp", sendLoginPhoneOTP);
 userRouter.post("/login/verify-otp", verifyLoginPhoneOtp);
-userRouter.post("/generate-upi", generateUpiId);
+// userRouter.post("/generate-upi", generateUpiId);
 
 //____________REGISTER ___________
 userRouter.post("/send-otp", registerUser);

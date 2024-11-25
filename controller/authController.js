@@ -227,11 +227,11 @@ export async function sendLoginPhoneOTP(req, res) {
     if (!user)
       return res
         .status(404)
-        .json({ status: 200, message: "User not registered" });
+        .json({ status: 404, message: "User not registered" });
     if (!user.isRegistered)
       return res
         .status(401)
-        .json({ message: "please complete your registeration" });
+        .json({ status: 401, message: "please complete your registeration" });
 
     user.otp = otp;
     user.otpExpiry = otpExpiry;
@@ -292,6 +292,7 @@ export async function registerUser(req, res) {
     }
 
     const user = new User({
+      upiId: phonenumber + "@axonpay",
       phonenumber,
       otp,
       otpExpiry,
@@ -700,6 +701,7 @@ export async function generateUpiId(req, res) {
   return res.json({
     success: true,
     status: 201,
+    user: { upiId: user.upiId },
   });
 }
 // _____________________________________________________________
