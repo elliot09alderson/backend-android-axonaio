@@ -267,20 +267,22 @@ export async function registerUser(req, res) {
 
     const otp = generateOtp();
     const otpExpiry = new Date(Date.now() + 30 * 1000); // OTP valid for 30 sec
-    if (isUserExist && !user.isRegistered) {
-      await User.findOneAndUpdate(
-        { phonenumber },
-        {
-          otp,
-          otpExpiry,
-        }
-      );
-      const smsResponse = await sendOTP(phonenumber, otp);
-      console.log("SMS sent successfully:", smsResponse);
+    if (isUserExist) {
+      if (!isUserExist.isRegistered) {
+        await User.findOneAndUpdate(
+          { phonenumber },
+          {
+            otp,
+            otpExpiry,
+          }
+        );
+        const smsResponse = await sendOTP(phonenumber, otp);
+        console.log("SMS sent successfully:", smsResponse);
 
-      return res
-        .status(200)
-        .json({ status: 200, message: "Please verify your number with OTP" });
+        return res
+          .status(200)
+          .json({ status: 200, message: "Please verify your number with OTP" });
+      }
     }
 
     const user = new User({
