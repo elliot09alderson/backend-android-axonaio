@@ -283,6 +283,12 @@ export async function registerUser(req, res) {
           .status(200)
           .json({ status: 200, message: "Please verify your number with OTP" });
       }
+
+      return res.json({
+        success: true,
+        status: 200,
+        message: "User already registered please log in.",
+      });
     }
 
     const user = new User({
