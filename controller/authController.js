@@ -339,8 +339,8 @@ export const resetPasswordSendOtp = async (req, res) => {
     await user.save();
 
     // Simulate sending OTP (e.g., via SMS API)
-    console.log("SMS sent successfully:", smsResponse);
     const smsResponse = await sendOTP(phonenumber, otp);
+    console.log("SMS sent successfully:", smsResponse);
 
     console.log(`OTP resent to ${phonenumber}: ${otp}`);
 
