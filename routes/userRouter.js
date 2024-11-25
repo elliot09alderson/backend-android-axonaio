@@ -9,6 +9,8 @@ import {
   userPhoneLogout,
   verifyLoginPhoneOtp,
   verifyRegisterationPhoneOtp,
+  resetPasswordSendOtp,
+  resetPasswordVerifyOtp,
 } from "../controller/authController.js";
 // import { isAuthenticatedUser } from "../middlewares/isAuthenticatedUser.js";
 
@@ -18,12 +20,13 @@ userRouter.post("/logout", userPhoneLogout);
 userRouter.post("/login/send-otp", sendLoginPhoneOTP);
 userRouter.post("/login/verify-otp", verifyLoginPhoneOtp);
 
-
 //____________REGISTER ___________
 userRouter.post("/send-otp", registerUser);
 userRouter.post("/verify-otp", verifyRegisterationPhoneOtp);
 userRouter.post("/set-password", setPassword);
 userRouter.post("/resend-otp", resendPhoneOtp);
+userRouter.post("/reset-password", resetPasswordSendOtp);
+userRouter.post("/reset-password-verify", resetPasswordVerifyOtp);
 userRouter.delete("/:id", deleteuser);
 
 // userRouter.get("/", isAuthenticatedUser, getUserDetails);

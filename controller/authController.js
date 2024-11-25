@@ -318,7 +318,99 @@ export async function registerUser(req, res) {
     });
   }
 }
+export const resetPasswordSendOtp = async (req, res) => {
+  const { phonenumber } = req.body;
+  if (!phonenumber)
+    return res
+      .status(400)
+      .json({ status: 400, message: "Phonenumber is required" });
 
+  try {
+    const user = await User.findOne({ phonenumber });
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: 404, message: "User not registered" });
+
+    const otp = generateOtp();
+    const otpExpiry = new Date(Date.now() + 30 * 1000); // 5 minutes from now
+    user.passResetOtp = otp;
+    user.passResetOtpExpiry = otpExpiry;
+    await user.save();
+
+    // Simulate sending OTP (e.g., via SMS API)
+    console.log("SMS sent successfully:", smsResponse);
+    const smsResponse = await sendOTP(phonenumber, otp);
+
+    console.log(`OTP resent to ${phonenumber}: ${otp}`);
+
+    res.json({
+      success: true,
+      status: 200,
+      message: "OTP sent successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Error resending OTP",
+      error,
+    });
+  }
+};
+
+export const resetPasswordVerifyOtp = async (req, res) => {
+  const { phonenumber, otp, newpassword, confirmNewPassword } = req.body;
+  if (newpassword !== confirmNewPassword) {
+    return res.status(400).json({
+      status: 400,
+      message: "newpassword and confirmNewPassword must be same ",
+    });
+  }
+  if (!phonenumber || !otp || !newpassword)
+    return res.status(400).json({
+      status: 400,
+      message: "Phonenumber, otp and newpassword required",
+    });
+
+  try {
+    const user = await User.findOne({ phonenumber });
+    if (!user)
+      return res
+        .status(404)
+        .json({ status: 404, message: "User not registered" });
+
+    if (
+      Number(user.passResetOtp) !== Number(otp) ||
+      user.passResetOtpExpiry < Date.now()
+    ) {
+      return res.status(400).json({
+        success: false,
+        status: 400,
+        message: "Invalid or expired OTP",
+      });
+    }
+    user.passResetOtp = null; // Clear OTP after successful verification
+    user.passResetOtpExpiry = null;
+
+    const hashedPassword = await bcrypt.hash(newpassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    return res.json({
+      success: true,
+      status: 200,
+      message: "Password changed successfully",
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Error resending OTP",
+      error,
+    });
+  }
+};
 export const resendPhoneOtp = async (req, res) => {
   const { phonenumber } = req.body;
   if (!phonenumber)

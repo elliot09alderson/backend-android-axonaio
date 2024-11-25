@@ -23,6 +23,15 @@ const userSchema = new mongoose.Schema(
       type: Date,
       required: false,
     },
+    passResetOtp: {
+      type: String,
+      required: false,
+    },
+    passResetOtpExpiry: {
+      type: Date,
+      required: false,
+    },
+
     password: {
       type: String,
       trim: true,
