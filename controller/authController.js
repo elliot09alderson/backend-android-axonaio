@@ -354,7 +354,7 @@ export const resetPasswordSendOtp = async (req, res) => {
       success: false,
       status: 500,
       message: "Error resending OTP",
-      error,
+      error: error.message,
     });
   }
 };
