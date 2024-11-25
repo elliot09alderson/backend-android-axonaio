@@ -31,4 +31,4 @@ const appsSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const AppsModel = mongoose.model("Apps", appsSchema);
+export const AppsModel = mongoose.model("Apps", appsSchema);

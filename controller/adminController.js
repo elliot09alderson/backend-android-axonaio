@@ -1,4 +1,5 @@
 import { Admin } from "../models/adminModel.js";
+import { AppsModel } from "../models/appsModel.js";
 
 export const getAllUser = async (req, res) => {
   try {
@@ -29,15 +30,56 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-
-
-// _________________________________________________________
+// _____________________ APPS ____________________________________
 
 export const getApps = async (req, res) => {
   try {
-    const users = await Apps.find();
-    res.status(200).json(users);
+    const apps = await AppsModel.find();
+    return res.status(200).json({ status: 200, apps });
   } catch (error) {
-    res.status(500).json({ error: error.message });
+    return res.status(500).json({ error: error.message });
+  }
+};
+export const createHomeAppsAndBanner = async (req, res) => {
+  try {
+    const { category, name, logo, url, imageUrl, link } = req.body;
+
+    // Find the document
+    let appData = await AppsModel.findOne();
+
+    // If the document doesn't exist, create one
+    if (!appData) {
+      appData = new AppsModel({
+        moneyTransferApps: [],
+        banners: [],
+        rechargeAndBillsApps: [],
+      });
+    }
+
+    // Add to the correct category
+    switch (category) {
+      case "moneyTransferApps":
+        appData.moneyTransferApps.push({ name, logo, url });
+        break;
+
+      case "rechargeAndBillsApps":
+        appData.rechargeAndBillsApps.push({ name, icon: logo, url });
+        break;
+
+      case "banners":
+        appData.banners.push({ imageUrl, link });
+        break;
+
+      default:
+        return res.status(400).json({ error: "Invalid category specified" });
+    }
+
+    // Save the document
+    await appData.save();
+
+    res.status(200).json({ message: "App added successfully", data: appData });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "An error occurred while adding the app" });
   }
 };

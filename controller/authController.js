@@ -360,6 +360,52 @@ export const resetPasswordSendOtp = async (req, res) => {
   }
 };
 
+export const changePassword = async (req, res) => {
+  const { phonenumber, oldPassword, newPassword, confirmNewPassword } =
+    req.body;
+
+  if (!phonenumber || !newPassword)
+    return res
+      .status(400)
+      .json({ status: 400, message: "phonenumber and password is required" });
+  if (password !== confirmNewPassword) {
+    return res
+      .status(400)
+      .json({
+        status: 400,
+        message: "password and confirm password must be same",
+      });
+  }
+
+  try {
+    const user = await User.findOne({ phonenumber });
+    if (!user)
+      return res.status(400).json({ status: 404, message: "user not found" });
+
+    const isTruePass = await bcrypt.compare(oldPassword, user.password);
+    if (!isTruePass) {
+      return res
+        .status(401)
+        .json({ status: 401, message: "invalid credentials" });
+    }
+    const newPass = await bcrypt.hash(newPassword, 10);
+    user.password = newPass;
+    await user.save();
+
+    return res
+      .status(200)
+      .json({ status: 200, message: "password changed successfully" });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      status: 500,
+      message: "Error while changing password",
+      error: error.message,
+    });
+  }
+};
+
+
 export const resetPasswordVerifyOtp = async (req, res) => {
   const { phonenumber, otp, newpassword, confirmNewPassword } = req.body;
   if (newpassword !== confirmNewPassword) {
@@ -503,6 +549,7 @@ export const verifyLoginPhoneOtp = async (req, res) => {
       .json({
         user: {
           token,
+          upiId: user.upiId,
           userId: user._id,
           phonenumber,
         },

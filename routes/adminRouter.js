@@ -15,8 +15,12 @@ import {
   verifyAdminOtp,
 } from "../controller/authController.js";
 const adminRouter = express.Router();
-adminRouter.post("/", registerAdmin);
+// ________________ APPS __________________
+
 adminRouter.post("/apps", getApps);
+
+// _________________________________________
+adminRouter.post("/", registerAdmin);
 adminRouter.post("/verify", verifyAdminOtp);
 adminRouter.post("/login", adminLogin);
 adminRouter.post("/login/verify", verifyAdminLoginOtp);

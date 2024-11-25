@@ -12,10 +12,12 @@ import {
   resetPasswordSendOtp,
   resetPasswordVerifyOtp,
   generateUpiId,
+  changePassword,
 } from "../controller/authController.js";
 // import { isAuthenticatedUser } from "../middlewares/isAuthenticatedUser.js";
 
 export const userRouter = express.Router();
+//____________ LOGIN ___________
 
 userRouter.post("/logout", userPhoneLogout);
 userRouter.post("/login/send-otp", sendLoginPhoneOTP);
@@ -26,8 +28,11 @@ userRouter.post("/login/verify-otp", verifyLoginPhoneOtp);
 userRouter.post("/send-otp", registerUser);
 userRouter.post("/verify-otp", verifyRegisterationPhoneOtp);
 userRouter.post("/set-password", setPassword);
+
+//____________ PASSWORD ___________
 userRouter.post("/resend-otp", resendPhoneOtp);
 userRouter.post("/reset-password", resetPasswordSendOtp);
+userRouter.post("/change-password", changePassword);
 userRouter.post("/reset-password-verify", resetPasswordVerifyOtp);
 userRouter.delete("/:id", deleteuser);
 
