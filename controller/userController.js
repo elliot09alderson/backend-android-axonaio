@@ -1,4 +1,4 @@
-import { User } from "../models/UserModel.js";
+import { User } from "../models/userModel.js";
 import { uploadImages } from "../utils/uploadImages.js";
 
 export const uploadfileMultiple = async (req, res) => {

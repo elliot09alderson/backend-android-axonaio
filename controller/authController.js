@@ -671,7 +671,38 @@ export async function deleteuser(req, res) {
     });
   }
 }
-// _________________________________________________
+export async function generateUpiId(req, res) {
+  const { phonenumber } = req.body;
+
+  const user = await User.findOne({ phonenumber });
+  if (!user) {
+    res.json({ status: 404, success: false, message: "User not found  " });
+  }
+  const genString = phonenumber + "@axonpay";
+
+  if (!user.upiId) {
+    const updatedUser = await User.findByIdAndUpdate(
+      { phonenumber },
+      { upiId: genString },
+      { new: true }
+    );
+    return res.json({
+      user: {
+        upiId: updatedUser?.upiId,
+        phonenumber,
+        userId: updatedUser._id,
+      },
+      success: true,
+      status: 201,
+      message: "upi id generated  successfully",
+    });
+  }
+  return res.json({
+    success: true,
+    status: 201,
+  });
+}
+// _____________________________________________________________
 
 export async function userLogin(req, res) {
   try {

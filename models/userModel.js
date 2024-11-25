@@ -7,6 +7,7 @@ const userSchema = new mongoose.Schema(
       required: true,
       unique: true,
     },
+    upiId: { type: String, unique: true },
     optVerified: {
       type: Boolean,
       default: false,
