@@ -378,9 +378,10 @@ export const changePassword = async (req, res) => {
   try {
     const user = await User.findOne({ phonenumber });
     if (!user)
-      return res.status(400).json({ status: 404, message: "user not found" });
+      return res.status(404).json({ status: 404, message: "user not found" });
 
     const isTruePass = await bcrypt.compare(oldPassword, user.password);
+    console.log(isTruePass);
     if (!isTruePass) {
       return res
         .status(401)
@@ -437,10 +438,12 @@ export const resetPasswordVerifyOtp = async (req, res) => {
     user.passResetOtp = null; // Clear OTP after successful verification
     user.passResetOtpExpiry = null;
 
+    console.log("new password", newpassword);
     const hashedPassword = await bcrypt.hash(newpassword, 10);
     user.password = hashedPassword;
     await user.save();
 
+    console.log(user.password);
     return res.json({
       success: true,
       status: 200,
