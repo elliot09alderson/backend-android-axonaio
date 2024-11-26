@@ -647,7 +647,7 @@ export const setPassword = async (req, res) => {
     if (user.password)
       return res.status(400).json({
         status: 400,
-        success: false,
+        success: true,
         message: "pincode already set please forget pincode",
       });
 
