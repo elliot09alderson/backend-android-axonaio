@@ -387,10 +387,16 @@ export const changePassword = async (req, res) => {
         .status(401)
         .json({ status: 401, message: "invalid credentials" });
     }
-    const newPass = await bcrypt.hash(newPassword, 10);
-    user.password = newPass;
-    await user.save();
-
+    const updatedUser = await User.findOneAndUpdate(
+      { phonenumber },
+      {
+        passResetOtp: null,
+        passResetOtpExpiry: null,
+        password: await bcrypt.hash(newPassword, 10),
+      },
+      { new: true, runValidators: true }
+    );
+    console.log(updatedUser);
     return res
       .status(200)
       .json({ status: 200, message: "password changed successfully" });
