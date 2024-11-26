@@ -366,10 +366,10 @@ export const changePassword = async (req, res) => {
     req.body;
   if (!phonenumber || !newPassword)
     return res
-      .status(400)
+      .status(200)
       .json({ status: 400, message: "phonenumber and password is required" });
   if (newPassword !== confirmNewPassword) {
-    return res.status(400).json({
+    return res.status(200).json({
       status: 400,
       message: "password and confirm password must be same",
     });
@@ -378,13 +378,13 @@ export const changePassword = async (req, res) => {
   try {
     const user = await User.findOne({ phonenumber });
     if (!user)
-      return res.status(404).json({ status: 404, message: "user not found" });
+      return res.status(200).json({ status: 404, message: "user not found" });
 
     const isTruePass = await bcrypt.compare(oldPassword, user.password);
     console.log(isTruePass);
     if (!isTruePass) {
       return res
-        .status(401)
+        .status(200)
         .json({ status: 401, message: "invalid credentials" });
     }
     const updatedUser = await User.findOneAndUpdate(
