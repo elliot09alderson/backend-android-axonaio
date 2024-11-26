@@ -17,3 +17,10 @@ export async function uploadImages(foldername, files) {
   );
   return uploadResponses;
 }
+export async function uploadImage(foldername, file) {
+  const uploadResponses = await cloudinary.uploader.upload(file.tempFilePath, {
+    folder: foldername,
+  });
+
+  return uploadResponses;
+}

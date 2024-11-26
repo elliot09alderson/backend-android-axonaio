@@ -1,5 +1,6 @@
 import { Admin } from "../models/adminModel.js";
 import { AppsModel } from "../models/appsModel.js";
+import { uploadImage, uploadImages } from "../utils/uploadImages.js";
 
 export const getAllUser = async (req, res) => {
   try {
@@ -35,15 +36,23 @@ export const deleteUser = async (req, res) => {
 export const getApps = async (req, res) => {
   try {
     const apps = await AppsModel.find();
-    return res.status(200).json({ status: 200, apps });
+    return res
+      .status(200)
+      .json({ status: 200, apps: apps.length > 0 ? apps[0] : apps });
   } catch (error) {
     return res.status(500).json({ error: error.message });
   }
 };
 export const createHomeAppsAndBanner = async (req, res) => {
   try {
-    const { category, name, logo, url, imageUrl, link } = req.body;
-
+    const { category, name, url } = req.body;
+    if (!req.files.image) {
+      return res.status(400).json({
+        success: false,
+        message: "At least one image file is required!",
+      });
+    }
+    const image = req.files.image;
     // Find the document
     let appData = await AppsModel.findOne();
 
@@ -56,18 +65,45 @@ export const createHomeAppsAndBanner = async (req, res) => {
       });
     }
 
+    const uploadResponse = await uploadImage("apps", image);
+    console.log(uploadResponse.url);
+
+    const logo = uploadResponse.url;
+
     // Add to the correct category
     switch (category) {
+      case "travelApps":
+        appData.travelApps.push({
+          travelAppName: name,
+          travelAppLogo: logo,
+          travelAppUrl: url,
+        });
+        break;
+      case "insuranceApps":
+        appData.insuranceApps.push({
+          insuranceAppName: name,
+          insuranceAppLogo: logo,
+          insuranceAppUrl: url,
+        });
+        break;
       case "moneyTransferApps":
-        appData.moneyTransferApps.push({ name, logo, url });
+        appData.moneyTransferApps.push({
+          moneyTransferAppName: name,
+          moneyTransferAppLogo: logo,
+          moneyTransferAppUrl: url,
+        });
         break;
 
       case "rechargeAndBillsApps":
-        appData.rechargeAndBillsApps.push({ name, icon: logo, url });
+        appData.rechargeAndBillApps.push({
+          rechargeAppName: name,
+          rechargeAppLogo: logo,
+          rechargeAppUrl: url,
+        });
         break;
 
       case "banners":
-        appData.banners.push({ imageUrl, link });
+        appData.banners.push({ bannerImageUrl: logo, bannerLink: url });
         break;
 
       default:

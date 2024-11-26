@@ -40,6 +40,8 @@ userRouter.delete("/:id", deleteuser);
 userRouter.put("/update-profile",updateDetails)
 
 
+
+
 // userRouter.get("/", isAuthenticatedUser, getUserDetails);
 
 // userRouter.put("/:id", editUser);

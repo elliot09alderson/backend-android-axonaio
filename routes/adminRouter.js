@@ -5,6 +5,7 @@ import {
   getAllUser,
   adminDetails,
   getApps,
+  createHomeAppsAndBanner,
 } from "../controller/adminController.js";
 import { isAuthenticatedAdmin } from "../middlewares/isAuthenticatedAdmin.js";
 import {
@@ -17,7 +18,8 @@ import {
 const adminRouter = express.Router();
 // ________________ APPS __________________
 
-adminRouter.post("/apps", getApps);
+adminRouter.get("/apps", getApps);
+adminRouter.post("/apps", createHomeAppsAndBanner);
 
 // _________________________________________
 adminRouter.post("/", registerAdmin);

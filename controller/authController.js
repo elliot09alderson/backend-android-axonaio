@@ -680,6 +680,7 @@ export const updateDetails = async (req, res) => {
         userId: updatedUser._id,
         upiId: updatedUser.upiId,
         name: updatedUser.name,
+        dob: updatedUser.dob,
         email: updatedUser.email,
         phonenumber: updatedUser.phonenumber,
         address: updatedUser.address,
