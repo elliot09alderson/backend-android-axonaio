@@ -368,7 +368,7 @@ export const changePassword = async (req, res) => {
     return res
       .status(400)
       .json({ status: 400, message: "phonenumber and password is required" });
-  if (password !== confirmNewPassword) {
+  if (newPassword !== confirmNewPassword) {
     return res.status(400).json({
       status: 400,
       message: "password and confirm password must be same",
