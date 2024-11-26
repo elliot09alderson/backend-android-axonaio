@@ -677,7 +677,12 @@ export const updateDetails = async (req, res) => {
     return res.json({
       message: "profile updated successfully",
       user: {
-        ...updatedUser,
+        userId: updatedUser._id,
+        upiId: updatedUser.upiId,
+        name: updatedUser.name,
+        email: updatedUser.email,
+        phonenumber: updatedUser.phonenumber,
+        address: updatedUser.address,
       },
       status: 200,
       success: false,
