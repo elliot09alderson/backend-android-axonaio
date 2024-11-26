@@ -645,7 +645,7 @@ export const setPassword = async (req, res) => {
         message: "number not verified, Please complete your registeration",
       });
     if (user.password)
-      return res.status(400).json({
+      return res.status(200).json({
         status: 200,
         success: true,
         message: "pincode already set please forget pincode",
