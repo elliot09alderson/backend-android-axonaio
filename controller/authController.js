@@ -633,6 +633,50 @@ export const verifyRegisterationPhoneOtp = async (req, res) => {
     });
   }
 };
+export const updateDetails = async (req, res) => {
+  try {
+    const { email, address, name, dob, phonenumber } = req.body;
+    if (typeof dob != Date) {
+      return res.json({
+        message: "dob must be in DD/MM/YYYY format",
+      });
+    }
+
+    const updatedUser = await User.findOneAndUpdate(
+      { phonenumber },
+      {
+        email,
+        address,
+        name,
+        dob,
+      },
+      { new: true, runValidators: true }
+    ).select("-password");
+
+    if (!updatedUser) {
+      return res.json({
+        message: "profile update failed",
+        status: 400,
+        success: false,
+      });
+    }
+
+    return res.json({
+      message: "profile updated successfully",
+      user: {
+        ...updatedUser,
+      },
+      status: 200,
+      success: false,
+    });
+  } catch (error) {
+    return res.json({
+      message: error.message,
+      status: 500,
+      success: false,
+    });
+  }
+};
 
 export const setPassword = async (req, res) => {
   const { phonenumber, password, confirmPassword } = req.body;

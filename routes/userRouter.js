@@ -13,6 +13,7 @@ import {
   resetPasswordVerifyOtp,
   generateUpiId,
   changePassword,
+  updateDetails,
 } from "../controller/authController.js";
 // import { isAuthenticatedUser } from "../middlewares/isAuthenticatedUser.js";
 
@@ -35,6 +36,9 @@ userRouter.post("/reset-password", resetPasswordSendOtp);
 userRouter.post("/change-password", changePassword);
 userRouter.post("/reset-password-verify", resetPasswordVerifyOtp);
 userRouter.delete("/:id", deleteuser);
+//____________ UPDATE ___________
+userRouter.put("/update-profile",updateDetails)
+
 
 // userRouter.get("/", isAuthenticatedUser, getUserDetails);
 
