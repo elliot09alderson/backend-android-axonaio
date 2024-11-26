@@ -435,15 +435,21 @@ export const resetPasswordVerifyOtp = async (req, res) => {
         message: "Invalid or expired OTP",
       });
     }
-    user.passResetOtp = null; // Clear OTP after successful verification
-    user.passResetOtpExpiry = null;
+    const updatedUser = await User.findOneAndUpdate(
+      {
+        phonenumber,
+        passResetOtp: otp,
+        passResetOtpExpiry: { $gte: Date.now() },
+      },
+      {
+        passResetOtp: null,
+        passResetOtpExpiry: null,
+        password: await bcrypt.hash(newpassword, 10),
+      },
+      { new: true, runValidators: true }
+    );
 
-    console.log("new password", newpassword);
-    const hashedPassword = await bcrypt.hash(newpassword, 10);
-    user.password = hashedPassword;
-    await user.save();
-
-    console.log(user.password);
+    console.log(updatedUser);
     return res.json({
       success: true,
       status: 200,
