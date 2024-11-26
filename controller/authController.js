@@ -259,7 +259,7 @@ export async function registerUser(req, res) {
     const { phonenumber } = req.body;
     if (!phonenumber) {
       return res.status(400).json({
-        status: 200,
+        status: 400,
         message: "please provide phonenumber",
       });
     }
@@ -286,7 +286,7 @@ export async function registerUser(req, res) {
 
       return res.json({
         success: true,
-        status: 200,
+        status: 400,
         message: "User already registered please log in.",
       });
     }
@@ -313,7 +313,7 @@ export async function registerUser(req, res) {
   } catch (error) {
     return res.json({
       success: false,
-      status: 200,
+      status: 400,
       message: "Registration failed",
       error: error.message,
     });
@@ -361,20 +361,18 @@ export const resetPasswordSendOtp = async (req, res) => {
 };
 
 export const changePassword = async (req, res) => {
+  console.log("recieved hitt");
   const { phonenumber, oldPassword, newPassword, confirmNewPassword } =
     req.body;
-
   if (!phonenumber || !newPassword)
     return res
       .status(400)
       .json({ status: 400, message: "phonenumber and password is required" });
   if (password !== confirmNewPassword) {
-    return res
-      .status(400)
-      .json({
-        status: 400,
-        message: "password and confirm password must be same",
-      });
+    return res.status(400).json({
+      status: 400,
+      message: "password and confirm password must be same",
+    });
   }
 
   try {
@@ -404,7 +402,6 @@ export const changePassword = async (req, res) => {
     });
   }
 };
-
 
 export const resetPasswordVerifyOtp = async (req, res) => {
   const { phonenumber, otp, newpassword, confirmNewPassword } = req.body;
@@ -648,8 +645,8 @@ export const setPassword = async (req, res) => {
         message: "number not verified, Please complete your registeration",
       });
     if (user.password)
-      return res.status(401).json({
-        status: 401,
+      return res.status(400).json({
+        status: 400,
         success: false,
         message: "pincode already set please forget pincode",
       });
