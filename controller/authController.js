@@ -636,9 +636,22 @@ export const verifyRegisterationPhoneOtp = async (req, res) => {
 export const updateDetails = async (req, res) => {
   try {
     const { email, address, name, dob, phonenumber } = req.body;
-    if (typeof dob != Date) {
-      return res.json({
-        message: "dob must be in DD/MM/YYYY format",
+    // Validate required fields
+    if (!email || !address || !name || !dob || !phonenumber) {
+      return res.status(400).json({
+        message:
+          "All fields (email, address, name, dob, phonenumber) are required",
+        success: false,
+      });
+    }
+
+    // Convert dob to a Date object
+    const parsedDob = new Date(dob);
+    if (isNaN(parsedDob)) {
+      return res.status(400).json({
+        message:
+          "Invalid date format. dob must be a valid date (e.g., 01/01/2000 or YYYY-MM-DD)",
+        success: false,
       });
     }
 
